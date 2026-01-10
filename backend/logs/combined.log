@@ -1,0 +1,43 @@
+2026-01-10 20:32:07 [info]: POST /api/v1/auth/login 200 380 - 130.612 ms
+2026-01-10 20:32:10 [info]: GET /api/v1/users 200 172 - 130.724 ms
+2026-01-10 20:32:10 [info]: GET /api/v1/users 200 172 - 130.125 ms
+2026-01-10 20:32:45 [info]: POST /api/v1/tasks 201 304 - 125.047 ms
+2026-01-10 20:32:50 [info]: GET /api/v1/users 200 172 - 115.680 ms
+2026-01-10 20:32:50 [info]: GET /api/v1/users 200 172 - 107.860 ms
+2026-01-10 20:33:16 [info]: POST /api/v1/auth/login 200 374 - 98.484 ms
+2026-01-10 20:33:18 [error]: Admin access only
+2026-01-10 20:33:18 [info]: GET /api/v1/users 403 47 - 56.365 ms
+2026-01-10 20:33:18 [error]: Admin access only
+2026-01-10 20:33:18 [info]: GET /api/v1/users 403 47 - 78.119 ms
+2026-01-10 20:40:04 [info]: POST /api/v1/auth/login 200 374 - 150.346 ms
+2026-01-10 20:41:31 [info]: POST /api/v1/auth/login 200 374 - 111.309 ms
+2026-01-10 20:43:01 [info]: POST /api/v1/auth/login 200 374 - 126.171 ms
+2026-01-10 20:44:29 [info]: POST /api/v1/auth/login 200 374 - 115.010 ms
+2026-01-10 21:02:00 [info]: POST /api/v1/auth/login 200 374 - 158.878 ms
+2026-01-10 21:02:02 [error]: Cast to ObjectId failed for value "my" (type string) at path "_id" for model "Task"
+2026-01-10 21:02:02 [info]: GET /api/v1/tasks/my 500 119 - 85.148 ms
+2026-01-10 21:02:02 [error]: Cast to ObjectId failed for value "my" (type string) at path "_id" for model "Task"
+2026-01-10 21:02:02 [info]: GET /api/v1/tasks/my 500 119 - 53.098 ms
+2026-01-10 21:06:17 [info]: GET /api/v1/tasks 200 357 - 201.462 ms
+2026-01-10 21:06:17 [info]: GET /api/v1/tasks 200 357 - 227.995 ms
+2026-01-10 21:06:22 [info]: GET /api/v1/tasks 200 357 - 187.574 ms
+2026-01-10 21:06:22 [info]: GET /api/v1/tasks 200 357 - 186.553 ms
+2026-01-10 21:06:30 [info]: GET /api/v1/tasks 200 357 - 188.434 ms
+2026-01-10 21:06:31 [info]: GET /api/v1/tasks 200 357 - 183.430 ms
+2026-01-10 21:06:56 [info]: POST /api/v1/auth/login 200 380 - 112.775 ms
+2026-01-10 21:06:58 [info]: GET /api/v1/users 200 172 - 143.264 ms
+2026-01-10 21:06:58 [info]: GET /api/v1/users 200 172 - 107.671 ms
+2026-01-10 21:07:03 [info]: GET /api/v1/users 200 172 - 121.121 ms
+2026-01-10 21:07:03 [info]: GET /api/v1/users 200 172 - 126.853 ms
+2026-01-10 21:07:03 [info]: PUT /api/v1/users/696257f4b5b7aa6ab08b4ed0/promote 200 137 - 215.312 ms
+2026-01-10 21:07:06 [info]: GET /api/v1/users 200 82 - 141.761 ms
+2026-01-10 21:07:13 [info]: GET /api/v1/tasks 200 1349 - 177.720 ms
+2026-01-10 21:07:13 [info]: GET /api/v1/tasks 200 1349 - 202.174 ms
+2026-01-10 21:07:24 [info]: GET /api/v1/users 200 82 - 130.038 ms
+2026-01-10 21:07:24 [info]: GET /api/v1/users 200 82 - 107.811 ms
+2026-01-10 21:08:19 [info]: POST /api/v1/auth/register 201 252 - 288.133 ms
+2026-01-10 21:08:34 [info]: POST /api/v1/auth/login 200 368 - 108.389 ms
+2026-01-10 21:08:36 [info]: GET /api/v1/tasks 200 82 - 113.418 ms
+2026-01-10 21:08:36 [info]: GET /api/v1/tasks 200 82 - 129.792 ms
+2026-01-10 21:08:46 [info]: GET /api/v1/tasks 200 82 - 120.276 ms
+2026-01-10 21:08:46 [info]: GET /api/v1/tasks 200 82 - 109.422 ms
