@@ -7,164 +7,127 @@ import Navbar from "../components/Navbar";
 export default function CreateTaskAdmin() {
   const { user } = useAuth();
 
-  // 🔐 Route protection
-  if (!user) return <Navigate to="/login" />;
-  if (user.role !== "ADMIN") return <Navigate to="/dashboard" />;
-
-  // 📦 State
-  const [users, setUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [userId, setUserId] = useState("");
-  const [status, setStatus] = useState("PENDING");
-
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [creating, setCreating] = useState(false);
 
-  // 👑 Load users
+  // 🔐 Admin protection
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== "ADMIN") return <Navigate to="/user/tasks" />;
+
+  // 🔹 Fetch users for assignment
   useEffect(() => {
-    const loadUsers = async () => {
+    const fetchUsers = async () => {
       try {
         const res = await api.get("/users");
-        const normalUsers = res.data.data.filter((u) => u.role === "USER");
-
-        setUsers(normalUsers);
-
-        // ✅ AUTO SELECT FIRST USER
-        if (normalUsers.length > 0) {
-          setUserId(normalUsers[0]._id);
-        }
-      } catch {
+        setUsers(res.data.data || []);
+      } catch (err) {
         setError("Failed to load users");
       } finally {
-        setLoadingUsers(false);
+        setLoading(false);
       }
     };
 
-    loadUsers();
+    fetchUsers();
   }, []);
 
-  // 🧠 Create task
-  const handleCreate = async (e) => {
+  // 🔹 Create task
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
-    if (!title.trim()) {
-      setError("Task title is required");
+    if (!title || !userId) {
+      alert("Title and assigned user are required");
       return;
     }
-
-    if (!userId) {
-      setError("Please select a user");
-      return;
-    }
-
-    if (creating) return;
 
     try {
-      setCreating(true);
-
       await api.post("/tasks", {
         title,
         description,
-        userId,
-        status,
+        userId, // 🔥 IMPORTANT: assignment happens here
       });
 
-      setSuccess("Task created successfully 🎉");
+      alert("Task created successfully");
 
+      // reset form
       setTitle("");
       setDescription("");
-      setStatus("PENDING");
-
-      // keep user selected (admin convenience)
+      setUserId("");
     } catch (err) {
-      setError(err.response?.data?.message || "Task creation failed");
-    } finally {
-      setCreating(false);
+      alert(err.response?.data?.message || "Failed to create task");
     }
   };
-
-  // 👤 Selected user details
-  const selectedUser = users.find((u) => u._id === userId);
 
   return (
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-bg p-6 flex justify-center">
-        <form onSubmit={handleCreate} className="card w-full max-w-lg">
-          <h2 className="page-title">Create Task (Admin)</h2>
+      <div className="min-h-screen bg-bg p-6">
+        <h1 className="text-2xl font-bold mb-6">➕ Create Task (Admin)</h1>
 
-          {error && <div className="error-box mb-3">{error}</div>}
-          {success && <div className="success-box mb-3">{success}</div>}
+        {loading && <p>Loading users...</p>}
+        {error && <p className="error-box">{error}</p>}
 
-          {/* Title */}
-          <input
-            placeholder="Task Title *"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mb-3"
-          />
-
-          {/* Description */}
-          <textarea
-            placeholder="Task Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="mb-3"
-          />
-
-          {/* Assign User */}
-          <select
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            disabled={loadingUsers || users.length === 0}
-            className="mb-2"
+        {!loading && (
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-md bg-card p-6 rounded space-y-4"
           >
-            {loadingUsers && <option>Loading users...</option>}
-            {!loadingUsers && users.length === 0 && (
-              <option>No users available</option>
-            )}
-
-            {users.map((u) => (
-              <option key={u._id} value={u._id}>
-                {u.name} ({u.email})
-              </option>
-            ))}
-          </select>
-
-          {/* 👤 Selected User Preview */}
-          {selectedUser && (
-            <div className="mb-3 text-sm text-gray-500">
-              Assigned to: <b>{selectedUser.name}</b> — {selectedUser.email}
+            {/* Title */}
+            <div>
+              <label className="block mb-1 font-semibold">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="input w-full"
+                placeholder="Enter task title"
+                required
+              />
             </div>
-          )}
 
-          {/* Status */}
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="mb-4"
-          >
-            <option value="PENDING">Pending</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="COMPLETED">Completed</option>
-          </select>
+            {/* Description */}
+            <div>
+              <label className="block mb-1 font-semibold">Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="input w-full"
+                placeholder="Enter task description"
+                rows={3}
+              />
+            </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full"
-            disabled={creating || users.length === 0}
-          >
-            {creating ? "Creating Task..." : "Create Task"}
-          </button>
-        </form>
+            {/* Assign User */}
+            <div>
+              <label className="block mb-1 font-semibold">Assign to User</label>
+              <select
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                className="input w-full"
+                required
+              >
+                <option value="">Select user</option>
+                {users.map((u) => (
+                  <option key={u._id} value={u._id}>
+                    {u.name} ({u.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="bg-accent text-black px-4 py-2 rounded font-semibold w-full"
+            >
+              Create Task
+            </button>
+          </form>
+        )}
       </div>
     </>
   );
