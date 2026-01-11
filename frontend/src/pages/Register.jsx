@@ -54,7 +54,7 @@ export default function Register() {
           <h2 className="text-xl font-bold text-center mb-2">Create Account</h2>
 
           <p className="text-sm text-muted text-center mb-6">
-            Sign up as a user to receive tasks from the admin
+            Sign up as a user to receive tasks assigned by the admin
           </p>
 
           {error && <p className="error-box mb-4">{error}</p>}
