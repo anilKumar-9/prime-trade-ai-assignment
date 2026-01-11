@@ -17,7 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
 function App() {
-  console.log("🔥 CORRECT APP.JSX IS RUNNING");
+
 
   return (
     <BrowserRouter>
