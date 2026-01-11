@@ -15,20 +15,33 @@ export default function AdminTasks() {
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "ADMIN") return <Navigate to="/user/tasks" />;
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await api.get("/tasks"); // ADMIN → get all tasks
-        setTasks(res.data.data || []);
-      } catch (err) {
-        setError("Failed to load tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // 🔹 Load all tasks (ADMIN)
+  const fetchTasks = async () => {
+    try {
+      const res = await api.get("/tasks/all");
+      setTasks(res.data.data || []);
+    } catch {
+      setError("Failed to load tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTasks();
   }, []);
+
+  // 🔥 Delete task (ADMIN)
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+
+    try {
+      await api.delete(`/tasks/${id}`);
+      fetchTasks(); // refresh list
+    } catch {
+      alert("Failed to delete task");
+    }
+  };
 
   return (
     <>
@@ -38,10 +51,7 @@ export default function AdminTasks() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">📋 Admin Tasks</h1>
 
-          <Link
-            to="/admin/create-task"
-            className="bg-accent text-black px-4 py-2 rounded font-semibold"
-          >
+          <Link to="/admin/create-task" className="btn btn-primary">
             + Create Task
           </Link>
         </div>
@@ -53,34 +63,31 @@ export default function AdminTasks() {
         <div className="grid gap-4">
           {tasks.map((task) => (
             <div key={task._id} className="card">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold">{task.title}</h3>
-
-                <span
-                  className={`text-sm px-3 py-1 rounded ${
-                    task.status === "COMPLETED"
-                      ? "bg-green-200 text-green-800"
-                      : task.status === "IN_PROGRESS"
-                      ? "bg-blue-200 text-blue-800"
-                      : "bg-yellow-200 text-yellow-800"
-                  }`}
-                >
-                  {task.status}
-                </span>
-              </div>
+              <h3 className="text-lg font-semibold mb-1">{task.title}</h3>
 
               <p className="text-muted mb-2">
                 {task.description || "No description"}
               </p>
 
-              <p className="text-sm">
+              <p className="text-sm mb-3">
                 Assigned to:{" "}
                 <span className="font-semibold">
-                  {task.assignedTo?.name ||
-                    task.assignedTo?.email ||
-                    "Unassigned"}
+                  {task.userId?.name || "Unknown"}
                 </span>
+                {task.userId?.email && (
+                  <span className="text-muted text-xs">
+                    {" "}
+                    ({task.userId.email})
+                  </span>
+                )}
               </p>
+
+              <button
+                onClick={() => handleDelete(task._id)}
+                className="btn btn-danger"
+              >
+                Delete Task
+              </button>
             </div>
           ))}
         </div>
