@@ -7,7 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import UserTasks from "./pages/UserTasks";
 
 // ADMIN
-import AdminPanel from "./pages/AdminPanel";
+import AdminPanelPage from "./pages/AdminPanelPage";
 import CreateTaskAdmin from "./pages/CreateTaskAdmin";
 import AdminTasks from "./pages/AdminTasks";
 
@@ -50,7 +50,7 @@ function App() {
           path="/admin"
           element={
             <AdminRoute>
-              <AdminPanel />
+              <AdminPanelPage />
             </AdminRoute>
           }
         />
