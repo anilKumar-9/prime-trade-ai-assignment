@@ -40,7 +40,7 @@ export default function AdminTasks() {
 
           <Link
             to="/admin/create-task"
-            className="bg-accent text-black px-4 py-2 rounded"
+            className="bg-accent text-black px-4 py-2 rounded font-semibold"
           >
             + Create Task
           </Link>
@@ -48,7 +48,6 @@ export default function AdminTasks() {
 
         {loading && <p>Loading tasks...</p>}
         {error && <p className="error-box">{error}</p>}
-
         {!loading && tasks.length === 0 && <p>No tasks found</p>}
 
         <div className="grid gap-4">
@@ -77,9 +76,10 @@ export default function AdminTasks() {
               <p className="text-sm">
                 Assigned to:{" "}
                 <span className="font-semibold">
-                  {task.assignedTo?.name || "N/A"}
-                </span>{" "}
-                ({task.assignedTo?.email || "N/A"})
+                  {task.assignedTo?.name ||
+                    task.assignedTo?.email ||
+                    "Unassigned"}
+                </span>
               </p>
             </div>
           ))}
