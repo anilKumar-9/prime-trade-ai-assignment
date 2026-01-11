@@ -1,159 +1,83 @@
-import ApiError from '../utils/api-error.js';
-import ApiResponse from '../utils/api-response.js';
-import { asyncHandler } from '../utils/async-handler.js';
-import { Task } from '../models/task.model.js';
+import { useEffect, useState } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
-/**
- * CREATE TASK
- * USER  → assigned to self
- * ADMIN → can assign to any user
- */
-export const createTask = asyncHandler(async (req, res) => {
-  const { title, description, userId } = req.body;
+export default function AdminTasks() {
+  const { user } = useAuth();
 
-  if (!req.user) {
-    throw new ApiError(401, 'Unauthorized');
-  }
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  if (!title) {
-    throw new ApiError(400, 'Title is required');
-  }
+  // 🔐 Admin protection
+  if (!user) return <Navigate to='/login' />;
+  if (user.role !== 'ADMIN') return <Navigate to='/user/tasks' />;
 
-  let assignedUserId = req.user._id;
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await api.get('/tasks'); // ADMIN → all tasks
+        setTasks(res.data.data || []);
+      } catch (err) {
+        setError('Failed to load tasks');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Admin can assign task to any user
-  if (req.user.role === 'ADMIN') {
-    if (!userId) {
-      throw new ApiError(400, 'userId is required for admin');
-    }
-    assignedUserId = userId;
-  }
+    fetchTasks();
+  }, []);
 
-  const task = await Task.create({
-    title,
-    description,
-    userId: assignedUserId,
-  });
+  return (
+    <>
+      <Navbar />
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, task, 'Task created successfully'));
-});
+      <div className='min-h-screen bg-bg p-6'>
+        <div className='flex justify-between items-center mb-6'>
+          <h1 className='text-2xl font-bold'>📋 Admin Tasks</h1>
 
-/**
- * GET TASKS
- * USER  → own tasks
- * ADMIN → all tasks
- */
-export const getTasks = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401, 'Unauthorized');
-  }
+          <Link
+            to='/admin/create-task'
+            className='bg-accent text-black px-4 py-2 rounded font-semibold'
+          >
+            + Create Task
+          </Link>
+        </div>
 
-  const filter = req.user.role === 'ADMIN' ? {} : { userId: req.user._id };
+        {loading && <p>Loading tasks...</p>}
+        {error && <p className='error-box'>{error}</p>}
+        {!loading && tasks.length === 0 && <p>No tasks found</p>}
 
-  const tasks = await Task.find(filter).populate('userId', 'name email');
+        <div className='grid gap-4'>
+          {tasks.map((task) => (
+            <div key={task._id} className='card'>
+              <div className='flex justify-between items-center mb-2'>
+                <h3 className='text-lg font-semibold'>{task.title}</h3>
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, tasks, 'Tasks fetched successfully'));
-});
+                <span className='text-xs px-3 py-1 rounded bg-slate-700 text-slate-200'>
+                  {new Date(task.createdAt).toLocaleDateString()}
+                </span>
+              </div>
 
-/**
- * GET SINGLE TASK
- */
-export const getTaskById = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401, 'Unauthorized');
-  }
+              <p className='text-muted mb-3'>
+                {task.description || 'No description'}
+              </p>
 
-  const task = await Task.findById(req.params.id).populate(
-    'userId',
-    'name email',
+              <div className='text-sm'>
+                <p>
+                  Assigned to:{' '}
+                  <span className='font-semibold'>
+                    {task.userId?.name || 'Unknown User'}
+                  </span>
+                </p>
+                <p className='text-xs text-muted'>{task.userId?.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
-
-  if (!task) {
-    throw new ApiError(404, 'Task not found');
-  }
-
-  // USER can access only own tasks
-  if (
-    req.user.role !== 'ADMIN' &&
-    task.userId._id.toString() !== req.user._id.toString()
-  ) {
-    throw new ApiError(403, 'Access denied');
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, task, 'Task fetched successfully'));
-});
-
-/**
- * UPDATE TASK
- */
-export const updateTask = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401, 'Unauthorized');
-  }
-
-  const task = await Task.findById(req.params.id);
-
-  if (!task) {
-    throw new ApiError(404, 'Task not found');
-  }
-
-  if (
-    req.user.role !== 'ADMIN' &&
-    task.userId.toString() !== req.user._id.toString()
-  ) {
-    throw new ApiError(403, 'Access denied');
-  }
-
-  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, updatedTask, 'Task updated'));
-});
-
-/**
- * DELETE TASK
- */
-export const deleteTask = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401, 'Unauthorized');
-  }
-
-  const task = await Task.findById(req.params.id);
-
-  if (!task) {
-    throw new ApiError(404, 'Task not found');
-  }
-
-  if (
-    req.user.role !== 'ADMIN' &&
-    task.userId.toString() !== req.user._id.toString()
-  ) {
-    throw new ApiError(403, 'Access denied');
-  }
-
-  await task.deleteOne();
-
-  return res.status(200).json(new ApiResponse(200, {}, 'Task deleted'));
-});
-
-/**
- * GET ALL TASKS (ADMIN ONLY)
- */
-export const getAllTasks = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== 'ADMIN') {
-    throw new ApiError(403, 'Admins only');
-  }
-
-  const tasks = await Task.find({}).populate('userId', 'name email');
-
-  return res.status(200).json(new ApiResponse(200, tasks, 'All tasks fetched'));
-});
+}
