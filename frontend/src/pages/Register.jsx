@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../api/axios";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -34,81 +34,94 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
-          Create Account
-        </h2>
-        <p className="text-sm text-center text-gray-500 mb-6">
-          Register to start managing your tasks
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-bg px-6">
+      <div className="w-full max-w-md">
+        {/* Branding */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-extrabold text-accent">
+            Prime Trade AI
+          </h1>
+          <p className="text-muted text-sm mt-1">
+            Task Assignment & Management Platform
+          </p>
+        </div>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
-            {error}
+        {/* Register Card */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card border border-border rounded-xl p-6"
+        >
+          <h2 className="text-xl font-bold text-center mb-2">Create Account</h2>
+
+          <p className="text-sm text-muted text-center mb-6">
+            Sign up as a user to receive tasks from the admin
+          </p>
+
+          {error && <p className="error-box mb-4">{error}</p>}
+
+          <div className="space-y-4">
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Full Name
+              </label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Password
+              </label>
+              <input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary w-full"
+            >
+              {loading ? "Creating account..." : "Create Account"}
+            </button>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Full Name
-            </label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Email Address
-            </label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="john@example.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Password
-            </label>
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 text-white py-2 font-semibold hover:bg-blue-700 transition disabled:opacity-60"
-          >
-            {loading ? "Creating account..." : "Register"}
-          </button>
+          <p className="text-sm text-muted text-center mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-accent font-semibold">
+              Login
+            </Link>
+          </p>
         </form>
-
-        <p className="text-sm text-center text-gray-500 mt-6">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        </p>
       </div>
     </div>
   );
