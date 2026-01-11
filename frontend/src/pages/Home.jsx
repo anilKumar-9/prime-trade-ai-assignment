@@ -1,93 +1,134 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api/axios";
 
-export default function Home() {
+export default function Register() {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      await api.post("/auth/register", form);
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center px-6 py-12">
-      <div className="max-w-4xl w-full text-center">
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-accent mb-4">
-          Prime Trade AI
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-bg px-6">
+      <div className="w-full max-w-md">
+        {/* 🔐 Register Card */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card border border-border rounded-xl p-6"
+        >
+          <h2 className="text-2xl font-bold text-center mb-2">
+            📝 Create an Account
+          </h2>
 
-        <p className="text-muted text-lg mb-10">
-          A role-based task & project management platform with secure
-          authentication, admin controls, and a modern dark UI.
-        </p>
-
-        {/* Features */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="card">
-            <h3 className="font-semibold mb-2">🔐 Secure Authentication</h3>
-            <p className="text-muted text-sm">
-              JWT-based authentication with role-based access control.
-            </p>
-          </div>
-
-          <div className="card">
-            <h3 className="font-semibold mb-2">👑 Admin Management</h3>
-            <p className="text-muted text-sm">
-              Admins can manage users, promote roles, and assign tasks.
-            </p>
-          </div>
-
-          <div className="card">
-            <h3 className="font-semibold mb-2">📋 Task Tracking</h3>
-            <p className="text-muted text-sm">
-              Users can view, update, and manage assigned tasks efficiently.
-            </p>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-center gap-4 mb-12">
-          <Link
-            to="/login"
-            className="bg-accent text-black px-6 py-3 rounded-lg font-semibold hover:opacity-90"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/register"
-            className="border border-border px-6 py-3 rounded-lg text-slate-200 hover:bg-slate-800"
-          >
-            Register
-          </Link>
-        </div>
-
-        {/* Demo / Assessment Section */}
-        <div className="max-w-xl mx-auto border border-border rounded-lg p-5 bg-slate-900 text-left">
-          <h3 className="text-accent font-semibold text-lg mb-3">
-            🔑 Assessment Demo Credentials
-          </h3>
-
-          <div className="text-sm text-slate-300 mb-4">
-            <p className="font-semibold">Super Admin</p>
-            <p>
-              Email: <span className="text-white">admin@test.com</span>
-            </p>
-            <p>
-              Password: <span className="text-white">8978281820</span>
-            </p>
-          </div>
-
-          <h4 className="text-slate-200 font-semibold mb-2">
-            🧪 Steps to Test the Application
-          </h4>
-
-          <ol className="list-decimal list-inside text-sm text-slate-400 space-y-1">
-            <li>Login using the above admin credentials.</li>
-            <li>Access the Admin Dashboard after login.</li>
-            <li>View all registered users.</li>
-            <li>Promote users to Admin role if required.</li>
-            <li>Create and assign tasks to users.</li>
-            <li>Login as a user to view and manage assigned tasks.</li>
-          </ol>
-
-          <p className="text-xs text-slate-500 mt-3">
-            ⚠️ These credentials are provided only for assessment and testing
-            purposes.
+          <p className="text-sm text-muted text-center mb-6">
+            Register as a user to receive and view assigned tasks
           </p>
+
+          {error && <p className="error-box mb-4">{error}</p>}
+
+          <div className="space-y-4">
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Full Name
+              </label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Password
+              </label>
+              <input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="input w-full"
+                required
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary w-full"
+            >
+              {loading ? "Creating account..." : "Register"}
+            </button>
+          </div>
+
+          <p className="text-sm text-muted text-center mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-accent font-semibold">
+              Login
+            </Link>
+          </p>
+        </form>
+
+        {/* 📘 Demo Instructions */}
+        <div className="mt-6 bg-card border border-border rounded-xl p-5">
+          <h3 className="font-semibold mb-2">🔎 How to Test This Project</h3>
+
+          <ul className="text-sm text-muted space-y-2 list-disc list-inside">
+            <li>
+              Login using the <b>Super Admin</b> credentials provided in the
+              README.
+            </li>
+            <li>As Admin, create tasks and assign them to registered users.</li>
+            <li>Register a new user here and login as that user.</li>
+            <li>Verify that the user can view only their assigned tasks.</li>
+            <li>Admin can view and delete all tasks.</li>
+          </ul>
         </div>
       </div>
     </div>
