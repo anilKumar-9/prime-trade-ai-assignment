@@ -1,20 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
-import Home from "./pages/Home.jsx";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
+// USER
+import UserTasks from "./pages/UserTasks";
 
-// USER PAGES
-import UserTasks from "./pages/UserTasks.jsx";
+// ADMIN
+import AdminPanel from "./pages/AdminPanel";
+import CreateTaskAdmin from "./pages/CreateTaskAdmin";
+import AdminTasks from "./pages/AdminTasks";
 
-// ADMIN PAGES
-import AdminPanel from "./pages/AdminPanel.jsx";
-import CreateTaskAdmin from "./pages/CreateTaskAdmin.jsx";
-import AdminTasks from "./pages/AdminTasks.jsx";
-
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import AdminRoute from "./components/AdminRoute.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   console.log("🔥 CORRECT APP.JSX IS RUNNING");
