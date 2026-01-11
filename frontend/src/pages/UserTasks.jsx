@@ -19,7 +19,7 @@ export default function UserTasks() {
         const res = await api.get("/tasks");
         setTasks(res.data.data || []);
       } catch {
-        setError("Unable to fetch your tasks. Please try again.");
+        setError("Failed to load tasks");
       } finally {
         setLoading(false);
       }
@@ -32,48 +32,39 @@ export default function UserTasks() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 px-6 py-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">My Tasks</h2>
+      <div className="min-h-screen bg-[#0b1220] px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-6">My Tasks</h2>
 
-          {/* Error State */}
+          {/* Error */}
           {error && (
-            <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-3">
+            <div className="mb-4 rounded-lg bg-red-900/40 text-red-300 px-4 py-3">
               {error}
             </div>
           )}
 
-          {/* Loading State */}
-          {loading && <p className="text-gray-500">Loading your tasks...</p>}
+          {/* Loading */}
+          {loading && <p className="text-gray-400">Loading tasks...</p>}
 
-          {/* Empty State */}
+          {/* Empty */}
           {!loading && tasks.length === 0 && !error && (
-            <div className="text-center py-16 text-gray-500">
-              <p className="text-lg font-medium">No tasks assigned yet</p>
-              <p className="text-sm mt-1">
-                Once admin assigns tasks, they’ll appear here.
-              </p>
-            </div>
+            <p className="text-gray-400">No tasks assigned yet.</p>
           )}
 
-          {/* Tasks Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Tasks */}
+          <div className="grid gap-5 sm:grid-cols-2">
             {tasks.map((task) => (
               <div
                 key={task._id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition"
+                className="rounded-xl border border-white/10 bg-gradient-to-br from-[#0f172a] to-[#020617] p-5"
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-lg font-semibold text-white mb-2">
                   {task.title}
                 </h3>
 
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm text-gray-300 leading-relaxed">
                   {task.description}
                 </p>
-
-                <div className="mt-4 text-xs text-gray-400">
-                  Assigned by Admin
-                </div>
               </div>
             ))}
           </div>
